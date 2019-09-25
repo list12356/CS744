@@ -20,8 +20,9 @@ def filter_articles(article_list):
 
 def main(input_path, output_path, debug=0, iter_num=10, master_ip='172.31.12.172', \
           persist=False, num_partitions=None):
-    conf = SparkConf().setAppName("PageRank-{!s}-PartNum-{!s}"\
-        .format(input_path.split('/')[-1], num_partitions if num_partitions else "default"))\
+    conf = SparkConf().setAppName("PageRank-{!s}-PartNum-{!s}-{}"\
+        .format(input_path.split('/')[-1], num_partitions if num_partitions else "default", \
+		"persist" if persist else "nopersist"))\
         .setMaster("spark://{!s}:7077".format(master_ip))\
         .set('spark.executor.memory', '20g').set('spark.driver.memory', '20g')\
 	.set('spark.eventLog.enabled', 'true')

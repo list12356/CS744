@@ -1,16 +1,19 @@
 from pyspark import SparkContext, SparkConf
 import argparse
 
+
 def main(input_path, output_path, master_ip):
-    conf = SparkConf().setAppName("PageRank").setMaster("spark://{!s}:7077".format(master_ip))\
+    conf = SparkConf().setAppName("Sort").setMaster("spark://{!s}:7077".format(master_ip))\
         .set('spark.executor.memory', '20g').set('spark.driver.memory', '20g')\
 	.set('spark.eventLog.enabled', 'true')
     sc = SparkContext(conf=conf)
     distFile = sc.textFile(input_path)
     splitted = distFile.map(lambda s:s.split(','))
-    temp = splitted.sortBy(lambda x: x[-1])
-    result = temp.sortBy(lambda x: x[2])
+    header = distFile.first()
+    splitted = splitted.filter(lambda x:x[0] != 'battery_level')
+    result = splitted.sortBy(lambda x: (x[2], x[-1]))
     output = result.map(lambda s:','.join(s))
+    output = sc.parallelize([header]).union(output).coalesce(1)
     output.saveAsTextFile(output_path)
     sc.stop()
 
