@@ -32,7 +32,7 @@ function start_cluster() {
         echo "Starting tensorflow servers on all hosts based on the spec in $1"
         echo "The server output is logged to serverlog-i.out, where i = 0, ..., 3 are the VM numbers."
         if [ "$2" = "single" ]; then
-            cd ~/tf ; python3 $1 --deploy_mode=single --task_index=0
+            nohup ssh node0 "cd ~/tf ; python3 $1 --deploy_mode=single --task_index=0" > serverlog-0.out 2>&1&
         elif [ "$2" = "cluster" ]; then
             nohup ssh node0 "cd ~/tf ; python3 $1 --deploy_mode=cluster  --task_index=0" > serverlog-0.out 2>&1&
             nohup ssh node1 "cd ~/tf ; python3 $1 --deploy_mode=cluster  --task_index=1" > serverlog-1.out 2>&1&

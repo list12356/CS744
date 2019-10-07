@@ -66,8 +66,8 @@ with mirrored_strategy.scope():
     x_train = x_train.reshape(60000, 28, 28, 1).astype('float32') / 255
     x_test = x_test.reshape(10000, 28, 28, 1).astype('float32') / 255
     
-    y_train = y_train.astype('float32')
-    y_test = y_test.astype('float32')
+    y_train = keras.utils.to_categorical(y_train, 10)
+    y_test = keras.utils.to_categorical(y_test, 10)
     
     # Reserve 10,000 samples for validation
     x_val = x_train[-10000:]
@@ -90,7 +90,7 @@ with mirrored_strategy.scope():
         metrics=[tf.keras.metrics.CategoricalAccuracy()])
    
     print("Training")
-    history = model.fit(x_train, y_train, epochs=10, batch_size=64*3)
+    history = model.fit(x_train, y_train, epochs=10, batch_size=32*3)
     print('\nhistory dict:', history.history)
     print("evaluating")
     result = model.evaluate(x_test, y_test, batch_size=128*3)
